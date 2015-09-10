@@ -17,12 +17,21 @@ local textpos = {
 }
 local textWidth = nil
 
-local lastoff = {
+local modeloff = {
    x = 0,
    y = 0
 }
 
-local textanim = 0.5
+local tlastoff = {
+   x = 0,
+   y = 0
+}
+local mlastoff = {
+   x = 0,
+   y = 0
+}
+
+local switchanim = 0.5
 
 local btns = nil
 
@@ -42,24 +51,34 @@ end
 local switch = function(dir)
    lastPerson = people[index]
    
-   local outX = textWidth + textoff.x
+   local toutX = textWidth + textoff.x
+   local moutY = util.h()
+   
    if dir == "left" then
-	  outX = 1 * outX
+	  toutX = 1 * toutX
+	  moutY = 1 * moutY
 	  index = index - 1
    elseif dir == "right" then
-	  outX = -1 * outX
+	  toutX = -1 * toutX
+	  moutY = -1 * moutY
 	  index = index + 1
    else
 	  error("dir must be \"left\" or \"right\"!")
    end
 
-   textoff.x = -outX
+   textoff.x = -toutX
+   modeloff.y = -moutY
 
-   timer.tween(textanim, lastoff, {x = outX}, "linear", function()
+   timer.tween(switchanim, tlastoff, {x = toutX}, "linear", function()
 				  lastPerson = nil
-				  lastoff.x = 0
+				  tlastoff.x = 0
    end)
-   timer.tween(textanim, textoff, {x = 0}, "linear")
+   timer.tween(switchanim, textoff, {x = 0}, "linear")
+
+   timer.tween(switchanim, mlastoff, {y = moutY}, "linear", function()
+				  mlastoff.y = 0
+   end)
+   timer.tween(switchanim, modeloff, {y = 0}, "linear")
 end
 
 local drawRect = function(r)
@@ -135,22 +154,29 @@ function love.draw()
    love.graphics.setColor({125, 0, 255})
    love.graphics.rectangle("fill", love.graphics.getWidth() / 2, 0, love.graphics.getWidth() / 2, love.graphics.getHeight())
 
-   
    love.graphics.setStencil(function()
 		 drawRect(stencilRect)
    end)
+   
    drawText(person, textoff)
-   if lastPerson then drawText(lastPerson, lastoff) end
+   if lastPerson then drawText(lastPerson, tlastoff) end
+   
    love.graphics.setStencil()
 
 
    love.graphics.push()
    util.resize(0.5, 1)
+
+   love.graphics.push()
+   if lastPerson then
+	  love.graphics.translate(util.w(), mlastoff.y)
+	  lastPerson.model.draw()
+   end
+   love.graphics.pop()
    
-   love.graphics.translate(love.graphics.getWidth() / 2, 0)
-
+   love.graphics.translate(util.w(), modeloff.y)
    person.model.draw()
-
+   
    util.resize(1, 1)
    love.graphics.pop()
 
