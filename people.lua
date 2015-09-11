@@ -147,7 +147,7 @@ return {
 			   love.graphics.line(-rb[i], -rb[i + 1], -rb[i + 2], -rb[i + 3])
 			end
 
-			local f = 100
+			local f = 120
 			
 			local place = (t * f % #rb) + 2
 			place = math.min(place, #rb - 2)
