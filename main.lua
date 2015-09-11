@@ -9,6 +9,7 @@ local index = 1
 local totalTime = 0
 
 local stencilRect = nil
+local indexRect = nil
 
 local textoff = {
    x = 0,
@@ -76,14 +77,19 @@ local switch = function(dir)
 	  
 	  local toutX = textWidth + textoff.x
 	  local moutY = util.h()
+	  local ioutX = indexWidth + indexoff.x
+
+	  lastIndex = index
 	  
 	  if dir == "left" then
 		 toutX = 1 * toutX
 		 moutY = 1 * moutY
+		 ioutX = 1 * ioutX
 		 index = index - 1
 	  elseif dir == "right" then
 		 toutX = -1 * toutX
 		 moutY = -1 * moutY
+		 ioutX = -1 * ioutX
 		 index = index + 1
 	  else
 		 error("dir must be \"left\" or \"right\"!")
@@ -91,6 +97,7 @@ local switch = function(dir)
 
 	  textoff.x = -toutX
 	  modeloff.y = -moutY
+	  indexoff.x = -ioutX
 
 	  switching = true
 
@@ -105,6 +112,14 @@ local switch = function(dir)
 					 mlastoff.y = 0
 	  end)
 	  timer.tween(switchanim, modeloff, {y = 0}, "linear")
+
+	  timer.tween(switchanim, ilastoff, {x = ioutX}, "linear", function()
+					 lastIndex = nil
+					 ilastoff.x = 0
+	  end)
+	  timer.tween(switchanim, indexoff, {x = 0}, "linear")
+
+	  
    end
 end
 
@@ -203,6 +218,21 @@ function love.draw()
    
    love.graphics.setStencil()
 
+   love.graphics.setStencil(function()
+		 drawRect({
+			   x = indexpos.x,
+			   y = indexpos.y,
+			   w = indexWidth,
+			   h = 50
+		 })
+	  end)
+
+
+   if lastIndex then love.graphics.printf(lastIndex, indexpos.x + ilastoff.x, indexpos.y + ilastoff.y, indexWidth, "center") end
+   
+   love.graphics.printf(index, indexpos.x + indexoff.x, indexpos.y + indexoff.y, indexWidth, "center")
+
+   love.graphics.setStencil()
 
    love.graphics.push()
    util.resize(0.5, 1)
