@@ -2,8 +2,11 @@ local people = require("people")
 local util = require("util")
 local fonts = require("fonts")
 local timer = require("hump.timer")
+local colors = require("colors")
 
 local index = 1
+
+local totalTime = 0
 
 local stencilRect = nil
 
@@ -121,6 +124,8 @@ end
 function love.update(dt)
    timer.update(dt)
 
+   totalTime = totalTime + dt
+
    stencilRect = {}
    stencilRect.x = 10
    stencilRect.y = 40
@@ -170,26 +175,26 @@ function love.draw()
    love.graphics.push()
    if lastPerson then
 	  love.graphics.translate(util.w(), mlastoff.y)
-	  lastPerson.model.draw()
+	  lastPerson.model.draw(totalTime)
    end
    love.graphics.pop()
    
    love.graphics.translate(util.w(), modeloff.y)
-   person.model.draw()
+   person.model.draw(totalTime)
    
    util.resize(1, 1)
    love.graphics.pop()
 
-   love.graphics.setColor({0, 255, 0})
-   
+   love.graphics.setColor(index > 1 and colors.green or colors.gray)
    drawArrow("left", btns.l.x, btns.l.y, btns.l.w, btns.l.h)
+   love.graphics.setColor(index < #people and colors.green or colors.gray)
    drawArrow("right", btns.r.x, btns.r.y, btns.r.w, btns.r.h)
 end
 
 function love.mousereleased(x, y)
-   if util.pir(x, y, btns.r.x, btns.r.y, btns.r.w, btns.r.h) and index < #people then
-	  switch("right")
-   elseif util.pir(x, y, btns.l.x, btns.l.y, btns.l.w, btns.l.h) and index > 1 then
+   if util.pir(x, y, btns.l.x, btns.l.y, btns.l.w, btns.l.h) and index > 1 then
 	  switch("left")
+   elseif util.pir(x, y, btns.r.x, btns.r.y, btns.r.w, btns.r.h) and index < #people then
+	  switch("right")
    end
 end
