@@ -27,6 +27,7 @@ local p = setmetatable({
 return {
    {
 	  name = "Democritus",
+	  date = "C. 200 BC",
 	  idea = "He thought that all matter was made up of discrete parts, which, as it happens, is true. His name for them was \"atom\", which meant, basically, \"unbreakable\".",
 	  disproof = "What is lightning? Clearly, it's coming out of the clouds, but the clouds don't appear to be getting any smaller, so their atoms can't be breaking off to form it.",
 	  proof = "Democritus had no proof. His theory was simply a lucky guess, which is why the Aristotilian model lasted for so long, as Democritus couldn't explain why things were made up of atoms.",
@@ -38,6 +39,7 @@ return {
    },
    {
 	  name = "John Dalton",
+	  date = "1803",
 	  idea = "Also thought that all matter was made up of discrete parts. However, he had experimental proof of it, unlike Democritus.",
 	  disproof = "His model cannot account for the behaviour of a Crookes tube. If atoms are simple, unbreakable particles, then what's all the stuff coming off of them in a Crookes tube?",
 	  proof = "He noticed that when certain chemicals were formed, exact proportions of component chemicals were used up. This lead him to believe that little parts of them were discrete, and exact numbers of the component particles formed the particles inside the new chemical.",
@@ -70,6 +72,7 @@ return {
    },
    {
 	  name = "J. J. Thomson",
+	  date = "1897",
 	  idea = "After seeing a Crookes tube, he figured out that each atom had some negative electrons in it as well as a bunch of positive stuff. He supposed that they were embedded in it, like currants in a plum pudding.",
 	  proof = "He knew that negatively charged particles were flying off of the atoms, so he knew that there must be multiple parts to the atoms.",
 	  disproof = "He couldn't explain how multiple isotopes of matter could exist. For example, deutrium behaves like regular hydrogen in every way except its mass, which makes no sense with the plum pudding model.",
@@ -96,6 +99,7 @@ return {
    },
    {
 	  name = "Ernest Rutherford",
+	  date = "1909",
 	  idea = "He saw that as opposed to electrons and protons being in one chunk, electrons in fact flew all around the nucleus. This gave rise to the solar system model that still represents the atom in a lot of media today.",
 	  proof = "He fired alpha particles through a very thin sheet of gold. Most passed through, but some bounced directly back at the gun. This told Rutherford that there must be a lot of empty space in the atom, but that there was a small, hard nucleus.",
 	  disproof = "He could not describe how different elements glow different colors when energized.",
@@ -187,6 +191,7 @@ return {
    },
    {
 	  name = "Niels Bohr",
+	  date = "1913",
 	  idea = "He found that the electrons didn't fall into the nucleus because there were only certain distances/energy states they could be in.",
 	  proof = "This model perfectly explained the emission spectrum of Hydrogen, as it explained that when an atom was energized, its electron moved up to a higher energy state and back down, emitting a proton in the process.",
 	  disproof = "He couldn't figure out why they confined themselves to certain energy states.",
@@ -221,6 +226,7 @@ return {
    },
    {
 	  name = "Louis de Broglie",
+	  date = "1924",
 	  idea = "He realized that the electrons in an atom, in fact, actually behave in a wave-like manner as well as a particle-like manner.",
 	  proof = "The electron states that Bohr discovered could actually be explained if one looked at electrons as having a wave behaviour, as opposed to Bohr, who had no explanation for why electrons had energy states.",
 	  disproof = "He couldn't predict the emission spectra of any atoms other than hydrogen.",
@@ -239,7 +245,7 @@ return {
 			local nR = util.w() / 3
 
 			for a = 0, 2 * math.pi, 0.01 do
-			   local r = nR + 20 * math.sin(t + a * 30)
+			   local r = nR + 20 * math.sin(a * 30 - t)
 			   table.insert(nP, math.cos(a) * r)
 			   table.insert(nP, math.sin(a) * r)
 			end
@@ -247,25 +253,28 @@ return {
 			love.graphics.setColor(colors.orange)
 			
 			love.graphics.setLineWidth(20)
+			love.graphics.setLineJoin("bevel")
 			love.graphics.polygon("line", nP)
+			love.graphics.setLineJoin("miter")
 			love.graphics.setLineWidth(1)
 		 end
 	  }
    },
    {
 	  name = "Erwin Schrödinger",
+	  date = "1922",
 	  idea = "He figured out that electrons in an atom do not travel in a circle around the nucleus, but actually can be found anywhere in the universe. However, they are most likely to be found in certain clouds whose shapes depend on the element around the nucleus.",
 	  proof = "Schrödinger used advanced math to figure this out, and that's the extent of my understanding of it. It works to predict many things about atoms, though, such as the emission spectra of every element.",
 	  disproof = "This model is the current one we use today, and it has not yet been disproved.",
 	  model = {
-		 draw = function()
+		 draw = function(t)
 			fonts.mol:set()
 
 			love.graphics.translate(util.w() / 2, util.h() / 2)
 
 
 			local r = p.r
-			local o = 20
+			local o = 40
 			
 			local c = -r - o / 2
 			
@@ -277,13 +286,13 @@ return {
 			end
 
 			cloud()
-
+			
 			love.graphics.rotate(math.pi / 2)
 			cloud()
-
+			
 			love.graphics.rotate(math.pi)
 			cloud()
-
+			
 			love.graphics.rotate(math.pi * 3 / 2)
 			cloud()
 
@@ -295,7 +304,12 @@ return {
 			love.graphics.print("-", -c - 6, c - 26)
 			love.graphics.print("-", c - 6, -c - 26)
 			love.graphics.print("-", -c - 6, -c - 26)
-			
+
+			love.graphics.setColor(colors.red)
+			drawCircle(0, 0, o / 2)
+
+			love.graphics.setColor(colors.black)
+			love.graphics.print("+", -11, -24)
 		 end
 	  }
    }

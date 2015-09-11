@@ -25,6 +25,16 @@ local modeloff = {
    y = 0
 }
 
+local indexpos = {
+   x = 100,
+   y = 20
+}
+local indexoff = {
+   x = 0,
+   y = 0
+}
+local indexWidth = nil
+
 local tlastoff = {
    x = 0,
    y = 0
@@ -33,16 +43,25 @@ local mlastoff = {
    x = 0,
    y = 0
 }
+local ilastoff = {
+   x = 0,
+   y = 0
+}
+
 
 local switchanim = 0.5
 
 local btns = nil
 
 local lastPerson = nil
+local lastIndex = nil
+
+local switching = false
 
 local drawText = function(person, off)
    love.graphics.setColor({255, 255, 255})
    local text = "Name: " .. person.name .. "\n\n"
+	  .. "Date: " .. person.date .. "\n\n"
 	  .. "Idea: " .. person.idea .. "\n\n"
 	  .. "Proof: " .. person.proof .. "\n\n"
 	  .. "Disproof: " .. person.disproof
@@ -52,36 +71,49 @@ local drawText = function(person, off)
 end
 
 local switch = function(dir)
-   lastPerson = people[index]
-   
-   local toutX = textWidth + textoff.x
-   local moutY = util.h()
-   
-   if dir == "left" then
-	  toutX = 1 * toutX
-	  moutY = 1 * moutY
-	  index = index - 1
-   elseif dir == "right" then
-	  toutX = -1 * toutX
-	  moutY = -1 * moutY
-	  index = index + 1
-   else
-	  error("dir must be \"left\" or \"right\"!")
+   if not switching and ((dir == "left" and index > 1) or (dir == "right" and index < #people)) then
+	  lastPerson = people[index]
+	  
+	  local toutX = textWidth + textoff.x
+	  local moutY = util.h()
+	  
+	  if dir == "left" then
+		 toutX = 1 * toutX
+		 moutY = 1 * moutY
+		 index = index - 1
+	  elseif dir == "right" then
+		 toutX = -1 * toutX
+		 moutY = -1 * moutY
+		 index = index + 1
+	  else
+		 error("dir must be \"left\" or \"right\"!")
+	  end
+
+	  textoff.x = -toutX
+	  modeloff.y = -moutY
+
+	  switching = true
+
+	  timer.tween(switchanim, tlastoff, {x = toutX}, "linear", function()
+					 lastPerson = nil
+					 tlastoff.x = 0
+					 switching = false
+	  end)
+	  timer.tween(switchanim, textoff, {x = 0}, "linear")
+
+	  timer.tween(switchanim, mlastoff, {y = moutY}, "linear", function()
+					 mlastoff.y = 0
+	  end)
+	  timer.tween(switchanim, modeloff, {y = 0}, "linear")
    end
+end
 
-   textoff.x = -toutX
-   modeloff.y = -moutY
-
-   timer.tween(switchanim, tlastoff, {x = toutX}, "linear", function()
-				  lastPerson = nil
-				  tlastoff.x = 0
-   end)
-   timer.tween(switchanim, textoff, {x = 0}, "linear")
-
-   timer.tween(switchanim, mlastoff, {y = moutY}, "linear", function()
-				  mlastoff.y = 0
-   end)
-   timer.tween(switchanim, modeloff, {y = 0}, "linear")
+function possSwitch(x, y)
+   if util.pir(x, y, btns.l.x, btns.l.y, btns.l.w, btns.l.h) then
+	  switch("left")
+   elseif util.pir(x, y, btns.r.x, btns.r.y, btns.r.w, btns.r.h) then
+	  switch("right")
+   end
 end
 
 local drawRect = function(r)
@@ -116,12 +148,13 @@ local drawArrow = function(dir, x, y, w, h)
 end
 
 function love.load()
-   love.window.setMode(1600, 900, {fsaa = 8})
+   love.window.setMode(1600, 900, {fsaa = 8, resizable = true})
+   love.window.setTitle("Toby's Atomic Models")
 
    fonts()
 end
 
-function love.update(dt)
+function love.update(dt)   
    timer.update(dt)
 
    totalTime = totalTime + dt
@@ -148,6 +181,8 @@ function love.update(dt)
    }
 
    textWidth = util.w() / 2 - textpos.x * 2
+
+   indexWidth = textWidth - btns.l.w - btns.r.w
 end
 
 function love.draw()
@@ -192,9 +227,9 @@ function love.draw()
 end
 
 function love.mousereleased(x, y)
-   if util.pir(x, y, btns.l.x, btns.l.y, btns.l.w, btns.l.h) and index > 1 then
-	  switch("left")
-   elseif util.pir(x, y, btns.r.x, btns.r.y, btns.r.w, btns.r.h) and index < #people then
-	  switch("right")
-   end
+   possSwitch(x, y)
+end
+
+function love.keypressed(k)
+   if k == "left" or k == "right" then switch(k) end
 end
