@@ -42,7 +42,7 @@ return {
 	  date = "1803",
 	  idea = "Also thought that all matter was made up of discrete parts. However, he had experimental proof of it, unlike Democritus.",
 	  disproof = "His model cannot account for the behaviour of a Crookes tube. If atoms are simple, unbreakable particles, then what's all the stuff coming off of them in a Crookes tube?",
-	  proof = "He noticed that when certain chemicals were formed, exact proportions of component chemicals were used up. This lead him to believe that little parts of them were discrete, and exact numbers of the component particles formed the particles inside the new chemical.",
+	  proof = "He noticed that when certain chemicals were formed, exact proportions of component chemicals were used up. This led him to believe that little parts of them were discrete, and exact numbers of the component particles formed the particles inside the new chemical.",
 	  model = {
 		 draw = function()
 			local smallR = util.w() / 10
